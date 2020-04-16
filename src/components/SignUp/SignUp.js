@@ -6,8 +6,8 @@ import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
 const SignUpPage = () => (
-  <div>
-    <h1>SignUp</h1>
+  <div className="text-center py-3">
+    <h1 className="py-3">SignUp</h1>
 
     <SignUpForm />
   </div>
@@ -98,41 +98,57 @@ class SignUpFormBase extends Component {
     const isInvalid = passwordOne === "" || email === "" || username === "";
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="username"
-          value={username}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Full Name"
-        />
-        <input
-          name="email"
-          value={email}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Email Address"
-        />
-        <input
-          name="passwordOne"
-          value={passwordOne}
-          onChange={this.onChange}
-          type="password"
-          placeholder="Password"
-        />
-        <input
-          name="branch"
-          value={branch}
-          onChange={this.onChange}
-          type="text"
-          placeholder="Branch"
-        />
-        <button disabled={isInvalid} type="submit">
-          Sign Up
-        </button>
+      <div className="row">
+        <div className="col-md-6 offset-sm-3">
+          <form onSubmit={this.onSubmit}>
+            <div className="form-group">
+              <input
+                name="username"
+                className="form-control"
+                value={username}
+                onChange={this.onChange}
+                type="text"
+                placeholder="Full Name"
+              />
+            </div>
+            <div className="form-group">
+              <input
+                name="email"
+                className="form-control"
+                value={email}
+                onChange={this.onChange}
+                type="text"
+                placeholder="Email Address"
+              />
+            </div>
+            <div className="form-group">
+              <input
+                className="form-control"
+                name="passwordOne"
+                value={passwordOne}
+                onChange={this.onChange}
+                type="password"
+                placeholder="Password"
+              />
+            </div>
+            <div className="form-group">
+              <input
+                className="form-control"
+                name="branch"
+                value={branch}
+                onChange={this.onChange}
+                type="text"
+                placeholder="Branch"
+              />
+            </div>
+            <button className="btn btn-info" disabled={isInvalid} type="submit">
+              Sign Up
+            </button>
 
-        {error && <p>{error.message}</p>}
-      </form>
+            {error && <p>{error.message}</p>}
+          </form>
+        </div>
+      </div>
     );
   }
 }

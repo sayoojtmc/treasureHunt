@@ -40,8 +40,6 @@ class App extends Component {
             <Navigation authUser={this.state.authUser} />
           </Navbar>
 
-          <hr />
-
           <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route path={ROUTES.SIGN_IN} component={SignInPage} />
           <Route path={ROUTES.HOME} component={HomePage} />
