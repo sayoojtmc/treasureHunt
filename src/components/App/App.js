@@ -13,13 +13,16 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { authUser: null };
+    this.state = { authUser: null, uid: null };
   }
 
   componentDidMount() {
     this.listener = this.props.firebase.auth.onAuthStateChanged((authUser) => {
       authUser
-        ? this.setState({ authUser })
+        ? this.setState({
+            authUser,
+            uid: this.props.firebase.auth.currentUser.uid,
+          })
         : this.setState({ authUser: null });
       if (authUser) {
         var user = this.props.firebase.auth.currentUser;
@@ -48,7 +51,7 @@ class App extends Component {
               return (
                 <HomePage
                   {...props}
-                  auth={this.state.authUser ? this.state.authUser : {}}
+                  uid={this.state.uid ? this.state.uid : "nil"}
                 />
               );
             }}
