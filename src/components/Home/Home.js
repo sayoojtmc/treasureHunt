@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, Jumbotron } from "react-bootstrap";
+import { Jumbotron } from "react-bootstrap";
 import withAuthorization from "../Session/withAuthorization";
 import Firebase from "../Firebase/Firebase";
 import { withFirebase } from "../Firebase/context";

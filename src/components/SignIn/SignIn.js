@@ -5,7 +5,7 @@ import * as ROUTES from "../../constants/routes";
 
 const SignInPage = () => (
   <div className="text-center py-3">
-    <h1 className="py-3">SignIn</h1>
+    <h1 className="py-3">Login to continue</h1>
     <SignInForm />
   </div>
 );
