@@ -42,7 +42,17 @@ class App extends Component {
 
           <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-          <Route path={ROUTES.HOME} component={HomePage} />
+          <Route
+            path={ROUTES.HOME}
+            component={(props) => {
+              return (
+                <HomePage
+                  {...props}
+                  auth={this.state.authUser ? this.state.authUser : {}}
+                />
+              );
+            }}
+          />
         </div>
       </Router>
     );
