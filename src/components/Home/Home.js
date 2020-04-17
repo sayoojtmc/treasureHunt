@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, Jumbotron } from "react-bootstrap";
+import { Jumbotron } from "react-bootstrap";
 import withAuthorization from "../Session/withAuthorization";
 import Firebase from "../Firebase/Firebase";
 import { Accordion, Card } from "react-bootstrap";
@@ -36,7 +36,7 @@ class Home extends Component {
               </Accordion>
               <Jumbotron className="my-5 mx-5">
                 <div>
-                  <img src="testimage.jpeg" className="img img-fluid" />
+                  <img src="testimage.jpeg" className="img img-fluid" alt="error" />
                 </div>
               </Jumbotron>
             </div>

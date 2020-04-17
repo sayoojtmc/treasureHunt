@@ -1,8 +1,8 @@
 import React from "react";
-import { Link, withRouter } from "react-router-dom";
-import SignOutButton from "../SignOut/SignOut";
+import { Link } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
-import { Navbar } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import { withFirebase } from "../Firebase";
 
 const isSelected = (history, path) => {
   if (history.location.pathname === path) {
@@ -11,6 +11,14 @@ const isSelected = (history, path) => {
     return { color: "#FFFFFF" };
   }
 };
+
+const SignOut = ({ firebase }) => (
+    <Button variant="warning" onClick={firebase.doSignOut}>
+      Sign Out
+    </Button>
+);
+
+const SignOutButton = withFirebase(SignOut);
 
 const Navigation = (props) => (
   <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -29,14 +37,18 @@ const NavigationAuth = () => (
 const NavigationNonAuth = () => (
   <>
     <li className="nav-item px-3">
-      <Link to={ROUTES.SIGN_UP} style={{ color: "white" }}>
-        Sign Up
-      </Link>
+        <Button variant="warning">
+            <Link to={ROUTES.SIGN_UP} style={{ color: "black" }}>
+                Sign Up
+            </Link>
+        </Button>
     </li>
     <li className="nav-item">
-      <Link to={ROUTES.SIGN_IN} style={{ color: "white" }}>
-        Sign In
-      </Link>
+        <Button variant="warning">
+            <Link to={ROUTES.SIGN_IN} style={{ color: "black" }}>
+                Sign In
+            </Link>
+        </Button>
     </li>
   </>
 );

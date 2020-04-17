@@ -7,7 +7,7 @@ import * as ROUTES from "../../constants/routes";
 
 const SignUpPage = () => (
   <div className="text-center py-3">
-    <h1 className="py-3">SignUp</h1>
+    <h1 className="py-3">Create account to play</h1>
 
     <SignUpForm />
   </div>
