@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
-
+import { getUserDocument } from "../SignUp/SignUp";
 const SignInPage = () => (
   <div className="text-center py-3">
     <h1 className="py-3">Login to continue</h1>
@@ -24,19 +24,28 @@ class SignInFormBase extends Component {
 
   onSubmit = (event) => {
     const { email, password } = this.state;
-
+    event.preventDefault();
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
+
         this.props.history.push(ROUTES.HOME);
+        var uid = this.props.firebase.auth.currentUser.uid;
+        var firestore = this.props.firebase.firestore;
+        getUserDocument(uid, firestore).then((userDoc) => {
+          try {
+            if (typeof window != "undefined") {
+              localStorage.setItem("auth", JSON.stringify(userDoc));
+            }
+            console.log(userDoc);
+          } catch (e) {}
+        });
       })
 
       .catch((error) => {
         this.setState({ error });
       });
-
-    event.preventDefault();
   };
 
   onChange = (event) => {

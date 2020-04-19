@@ -7,6 +7,7 @@ import SignInPage from "../SignIn/SignIn";
 import HomePage from "../Home/Home";
 import { Navbar } from "react-bootstrap";
 import { withFirebase } from "../Firebase";
+import Admin from "../Admin";
 import * as ROUTES from "../../constants/routes";
 
 class App extends Component {
@@ -56,6 +57,7 @@ class App extends Component {
               );
             }}
           />
+          <Route path="/admin" component={Admin} />
         </div>
       </Router>
     );

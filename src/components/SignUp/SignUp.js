@@ -38,15 +38,16 @@ const generateUserDocument = async (user, additionalData, firestore) => {
       console.error("Error creating user document", error);
     }
   }
-  return getUserDocument(user.uid);
+  return getUserDocument(user.uid, firestore);
 };
-const getUserDocument = async (uid, firestore) => {
+export const getUserDocument = async (uid, firestore) => {
   if (!uid) return null;
+
+  const userDocument = await firestore.doc(`users/${uid}`).get();
   try {
-    const userDocument = await firestore.doc(`users/${uid}`).get();
-    return {
+    return await {
       uid,
-      ...userDocument.data(),
+      role: userDocument.data().role,
     };
   } catch (error) {
     console.error("Error fetching user", error);
@@ -67,7 +68,7 @@ class SignUpFormBase extends Component {
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(ROUTES.HOME);
         var user = this.props.firebase.auth.currentUser;
-        const userDoc = generateUserDocument(
+        generateUserDocument(
           user,
           {
             level: 1,
@@ -75,10 +76,16 @@ class SignUpFormBase extends Component {
             username: username,
             email: email,
             branch: branch,
+            role: 0,
           },
+
           this.props.firebase.firestore
-        );
-        console.log(userDoc);
+        ).then((userDoc) => {
+          if (typeof window != "undefined") {
+            localStorage.setItem("auth", JSON.stringify(userDoc));
+          }
+          console.log(userDoc);
+        });
       })
 
       .catch((error) => {

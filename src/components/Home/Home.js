@@ -12,24 +12,39 @@ class Home extends Component {
       guesses: 4,
       url: "",
       file: null,
+      isSubmitted: false,
+      isVerified: false,
+      isRejected: false,
     };
   }
+  updateDb = () => {
+    const userRef = this.props.firestore.doc(`users/${this.props.uid}`);
+    userRef.set(this.state, { merge: true }).then((snapshot) => {
+      console.log("updated");
+    });
+  };
   handleChange = (e) => {
     e.preventDefault();
     this.setState({ file: e.target.files[0] });
   };
-  handleUpload = () => {
+  handleUpload = (event) => {
+    event.preventDefault();
     var storage = this.props.firebase.storage;
 
     var filename = this.state.file.name;
     var name = filename.split(".")[0];
     var extension = name.split(".")[1];
     try {
-      var pathReference = storage.ref(`tasks/${name}.${extension}`);
+      var pathReference = storage.ref(`tasks/${this.state.level}`);
       pathReference.put(this.state.file).then((snapshot) => {
-        pathReference.getDownloadURL().then((url) => console.log(url));
+        pathReference.getDownloadURL().then((url) => {
+          console.log(url);
+          this.setState({ file: null });
+        });
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   };
   componentDidMount() {
     console.log(this.props);
@@ -49,7 +64,9 @@ class Home extends Component {
     pathReference.getDownloadURL().then((url) => {
       try {
         this.setState({ url: url });
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     });
   }
   geturl() {
