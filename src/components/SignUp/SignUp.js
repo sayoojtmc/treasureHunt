@@ -38,7 +38,7 @@ const generateUserDocument = async (user, additionalData, firestore) => {
       console.error("Error creating user document", error);
     }
   }
-  return getUserDocument(user.uid, firestore);
+  // return getUserDocument(user.uid, firestore);
 };
 export const getUserDocument = async (uid, firestore) => {
   if (!uid) return null;
@@ -77,13 +77,13 @@ class SignUpFormBase extends Component {
             email: email,
             branch: branch,
             role: 0,
+            isSubmitted: false,
+            isVerified: false,
+            isRejected: false,
           },
 
           this.props.firebase.firestore
         ).then((userDoc) => {
-          if (typeof window != "undefined") {
-            localStorage.setItem("auth", JSON.stringify(userDoc));
-          }
           console.log(userDoc);
         });
       })

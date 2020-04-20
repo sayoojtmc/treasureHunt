@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Navigation from "../Navigation/Navigation";
 import SignUpPage from "../SignUp/SignUp";
@@ -46,7 +46,21 @@ class App extends Component {
 
           <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
           <Route path={ROUTES.SIGN_IN} component={SignInPage} />
+
           <Route
+            exact
+            path="/admin"
+            component={(props) => {
+              return (
+                <Admin
+                  {...props}
+                  uid={this.state.uid ? this.state.uid : "nil"}
+                />
+              );
+            }}
+          />
+          <Route
+            exact
             path={ROUTES.HOME}
             component={(props) => {
               return (
@@ -57,7 +71,6 @@ class App extends Component {
               );
             }}
           />
-          <Route path="/admin" component={Admin} />
         </div>
       </Router>
     );
