@@ -120,6 +120,22 @@ class Home extends Component {
       return url;
     });
   }
+  win() {
+    var uid = this.props.uid;
+    const userRef = this.props.firebase.firestore.doc(
+      `users/${this.props.uid}`
+    );
+    userRef
+      .set(
+        {
+          finishtime: this.props.firebase.firestore.Timestamp.toDate(),
+        },
+        { merge: true }
+      )
+      .then((snapshot) => {
+        console.log("updated");
+      });
+  }
   uploadTask() {
     return (
       <div className="col-sm-5 offset-sm-4 text-center">
@@ -147,18 +163,25 @@ class Home extends Component {
   }
   handleGuess = (level) => (e) => {
     e.preventDefault();
+    if (this.state.taskguess == "abc") {
+      this.setState({ level: level + 1 });
+      this.updateDb();
+    }
   };
   textTask(level) {
     if (level == 1) {
       return (
         <div className="col-sm-5 offset-sm-4 text-center">
           <input
-            className="form-control"
+            className="form-control "
             type="text"
             name="taskguess"
             onChange={this.handleInput}
           />
-          <button className="btn btn-primary" onClick={this.handleGuess(level)}>
+          <button
+            className="btn btn-primary my-3 "
+            onClick={this.handleGuess(level)}
+          >
             submit
           </button>
         </div>
@@ -204,17 +227,18 @@ class Home extends Component {
                   </Accordion.Toggle>
                   <Accordion.Collapse eventKey="0">
                     <Card.Body>
-                      <pre>
-                        1. Identify the person behind the blocks. 2. Each block
-                        gets revealed once you successfully complete the tasks
-                        assigned. 3. The duration of the game will be 5 days,
-                        after the commencement. 4. Each participant has ONLY
-                        THREE chances to guess the person and if the third one
-                        goes wrong you will be eliminated! 5. The winner will be
-                        the one to find out the person at first. 6. Be quick!!
-                        Incase of multiple winners, let the draw decide. Why
-                        wait? Let the hunt begin
-                      </pre>
+                      1. Identify the person behind the blocks. <br />
+                      2. Each block gets revealed once you successfully complete
+                      the tasks assigned. <br />
+                      3. The duration of the game will be 5 days, after the
+                      commencement. <br />
+                      4. Each participant has ONLY THREE chances to guess the
+                      person and if the third one goes wrong you will be
+                      eliminated! <br />
+                      5. The winner will be the one to find out the person at
+                      first. <br />
+                      6. Be quick!! Incase of multiple winners, let the draw
+                      decide. Why wait? Let the hunt begin
                     </Card.Body>
                   </Accordion.Collapse>
                 </Card>
