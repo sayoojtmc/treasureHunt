@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { Jumbotron } from "react-bootstrap";
 import withAuthorization from "../Session/withAuthorization";
-import Firebase from "../Firebase/Firebase";
 import { withFirebase } from "../Firebase/context";
 import { Accordion, Card } from "react-bootstrap";
 import { tasks } from "../../tasks";
+import connect from './connect.jpeg';
+import cross from './cross.jpg';
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -16,8 +18,10 @@ class Home extends Component {
       isSubmitted: false,
       isVerified: false,
       isRejected: false,
+      sizeExceeded:false,
       guess: "",
       taskguess: "",
+      uname:"",
     };
   }
   updateDb = () => {
@@ -40,7 +44,13 @@ class Home extends Component {
   };
   handleChange = (e) => {
     e.preventDefault();
-    this.setState({ file: e.target.files[0] });
+    let size = (e.target.files[0].size)/(1024*1024);
+    if(size>1) {
+        e.target.value = "";
+        this.setState({sizeExceeded:true});
+    }
+    else
+        this.setState({ file: e.target.files[0] });
   };
   handleInput = (e) => {
     e.preventDefault();
@@ -60,7 +70,7 @@ class Home extends Component {
         pathReference.getDownloadURL().then((url) => {
           console.log(url);
           this.setState({ file: null, isSubmitted: true, isRejected: false });
-
+          console.log(this.state.subTime);
           this.updateDb();
         });
       });
@@ -93,9 +103,9 @@ class Home extends Component {
           this.setState({
             level: level,
             guesses: guess,
-            isVerified,
-            isSubmitted,
-            isRejected,
+            isVerified: false,
+            isSubmitted: false,
+            isRejected: false,
             role,
           });
           if (isSubmitted && isVerified) {
@@ -120,56 +130,140 @@ class Home extends Component {
       return url;
     });
   }
-  win() {
-    var uid = this.props.uid;
-    const userRef = this.props.firebase.firestore.doc(
-      `users/${this.props.uid}`
-    );
-    userRef
-      .set(
-        {
-          finishtime: this.props.firebase.firestore.Timestamp.toDate(),
-        },
-        { merge: true }
-      )
-      .then((snapshot) => {
-        console.log("updated");
-      });
+
+  win = (e) => {
+    e.preventDefault();
+    if(this.state.guess == "ans") {
+        
+        this.props.firebase.firestore
+        .doc(`users/${this.props.uid}`)
+        .get()
+        .then((snapshot) => {
+            try {
+            var uname = JSON.stringify(snapshot.data()["username"]);
+            this.setState({uname:uname});
+            } catch (e) {}
+        });
+        
+        setTimeout(()=> {
+            let time = new Date().toLocaleTimeString();
+            const userRef = this.props.firebase.firestore.doc(
+            `winners/${this.props.uid}`
+            );
+            userRef
+            .set(
+                {
+                finishtime: time,
+                username:this.state.uname,
+                },
+                { merge: true }
+            )
+            .then((snapshot) => {
+                console.log("updated");
+            });
+        },2000);
+    }
+    else {
+        this.setState({guesses:this.state.guesses-1})
+        console.log(this.state.guesses);
+    }
   }
   uploadTask() {
-    return (
-      <div className="col-sm-5 offset-sm-4 text-center">
-        {this.state.isSubmitted == false ? (
-          <>
-            {" "}
-            <input
-              className="form-control-file"
-              type="file"
-              onChange={this.handleChange}
-            />
-            <div className="text-center py-3">
-              <button className="btn btn-primary " onClick={this.handleUpload}>
-                Upload!
-              </button>
+      if(this.state.level===3) {
+        return (
+            <div className="col-sm-5 offset-sm-4 text-center">
+              {this.state.isSubmitted === false ? (
+                <>
+                  {" "}
+                  <Jumbotron className="my-5 mx-5">
+                    <div>
+                        <img src={cross} alt = "error" className="img img-fluid" />
+                    </div>
+                  </Jumbotron>
+                  <input
+                    className="form-control-file"
+                    type="file"
+                    onChange={this.handleChange}
+                  />
+                  {this.state.sizeExceeded===false ? (
+                      <div>
+      
+                      </div>
+                  ) : (
+                      <div style={{color:"red"}}>
+                          <br/>
+                          File size should be less than 1MB.
+                          {setTimeout(()=> this.setState({sizeExceeded:false}),3000)}
+                      </div>
+                  )}
+      
+                  <div className="text-center py-3">
+                    <button className="btn btn-primary " onClick={this.handleUpload} disabled = {this.state.sizeExceeded}>
+                      Upload!
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <h1 className="text-bold">
+                  Wait for admins to verify your submission!
+                </h1>
+              )}
             </div>
-          </>
-        ) : (
-          <h1 className="text-bold">
-            Wait for admins to verify your submission!
-          </h1>
-        )}
-      </div>
-    );
+          );  
+      }
+      else {
+        return (
+        <div className="col-sm-5 offset-sm-4 text-center">
+            {this.state.isSubmitted === false ? (
+            <>
+                {" "}
+                <input
+                className="form-control-file"
+                type="file"
+                onChange={this.handleChange}
+                />
+                {this.state.sizeExceeded===false ? (
+                    <div>
+
+                    </div>
+                ) : (
+                    <div style={{color:"red"}}>
+                        <br/>
+                        File size should be less than 1MB.
+                        {setTimeout(()=> this.setState({sizeExceeded:false}),3000)}
+                    </div>
+                )}
+
+                <div className="text-center py-3">
+                <button className="btn btn-primary " onClick={this.handleUpload} disabled = {this.state.sizeExceeded}>
+                    Upload!
+                </button>
+                </div>
+            </>
+            ) : (
+            <h1 className="text-bold">
+                Wait for admins to verify your submission!
+            </h1>
+            )}
+        </div>
+        );
+    }
   }
   handleGuess = (level) => (e) => {
     e.preventDefault();
-    if (this.state.taskguess == "abc") {
-      this.setState({ level: level + 1 });
-      this.updateDb();
+    if (this.state.taskguess === "abc" && level===1) {
+        this.setState({ level: level + 1, isSubmitted:false});
+        console.log(this.state.subTime);
+        this.updateDb();
+    }
+    if (this.state.taskguess === "def" && level===7) {
+        this.setState({ level: level + 1, isSubmitted:false});
+        console.log(this.state.level);
+        this.updateDb();
     }
   };
   textTask(level) {
-    if (level == 1) {
+    if (level === 1) {
       return (
         <div className="col-sm-5 offset-sm-4 text-center">
           <input
@@ -187,12 +281,35 @@ class Home extends Component {
         </div>
       );
     }
+    else if(level === 7) {
+      return ( 
+        <div className="col-sm-5 offset-sm-4 text-center">
+        <Jumbotron className="my-5 mx-5">
+            <div>
+                <img src={connect} alt = "error" className="img img-fluid" />
+            </div>
+        </Jumbotron>
+        <input
+          className="form-control "
+          type="text"
+          name="taskguess"
+          onChange={this.handleInput}
+        />
+        <button
+          className="btn btn-primary my-3 "
+          onClick={this.handleGuess(level)}
+        >
+          submit
+        </button>
+      </div>
+      );  
+    }
   }
   TaskTab() {
     return (
       <>
         <label>{tasks[this.state.level - 1]}</label>
-        {this.state.level == 1 || this.state.level == 7
+        {this.state.level === 1 || this.state.level === 7
           ? this.textTask(this.state.level)
           : this.uploadTask()}
         {this.state.isRejected ? (
@@ -246,27 +363,37 @@ class Home extends Component {
               </Accordion>
               <Jumbotron className="my-5 mx-5">
                 <div>
-                  <img src={this.state.url} className="img img-fluid" />
+                  <img src={this.state.url}alt = "error" className="img img-fluid" />
                 </div>
               </Jumbotron>
               <form>
+              {this.state.guesses> 0 ? (
                 <div className="form-group text-center">
+                  
                   <label>Make a guess!</label>
                   <div className="col-sm-5 offset-sm-3 text-center">
                     <input
                       className="form-control width-50 mx-10"
                       type="text"
+                      name="guess"
+                      onChange={this.handleInput}
                     />
                   </div>
                   <small className="form-text text-muted">
                     You only have {this.state.guesses} guesses remaining !
                   </small>
                   <div className="text-center py-3">
-                    <button className="btn btn-primary ">Guess!</button>
+                    <button className="btn btn-primary " onClick = {this.win}>Guess!</button>
                   </div>
                 </div>
+                  ) :
+                  (
+                    <div classname = "col-sm-5 offset-sm-3 text-center">
+                      <h1> GAME OVER</h1>
+                    </div>
+                  )}
                 <div className="form-group mx-10 text-center">
-                  {this.state.level <= 11 ? (
+                  {this.state.level < 11 ? (
                     this.TaskTab()
                   ) : (
                     <p>no more tasks</p>

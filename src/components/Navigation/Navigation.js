@@ -4,13 +4,7 @@ import * as ROUTES from "../../constants/routes";
 import { Button } from "react-bootstrap";
 import { withFirebase } from "../Firebase";
 
-const isSelected = (history, path) => {
-  if (history.location.pathname === path) {
-    return { color: "blue" };
-  } else {
-    return { color: "#FFFFFF" };
-  }
-};
+
 
 const SignOut = ({ firebase }) => (
     <Button variant="warning" onClick={firebase.doSignOut}>
