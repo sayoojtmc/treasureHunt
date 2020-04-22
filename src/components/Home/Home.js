@@ -35,6 +35,7 @@ class Home extends Component {
           isVerified: this.state.isVerified,
           isRejected: this.state.isRejected,
           level: this.state.level,
+          guesses: this.state.guesses,
         },
         { merge: true }
       )
@@ -165,6 +166,7 @@ class Home extends Component {
     }
     else {
         this.setState({guesses:this.state.guesses-1})
+        this.updateDb();
         console.log(this.state.guesses);
     }
   }
@@ -252,15 +254,27 @@ class Home extends Component {
   handleGuess = (level) => (e) => {
     e.preventDefault();
     if (this.state.taskguess === "abc" && level===1) {
-        this.setState({ level: level + 1, isSubmitted:false});
-        console.log(this.state.subTime);
-        this.updateDb();
-    }
-    if (this.state.taskguess === "def" && level===7) {
-        this.setState({ level: level + 1, isSubmitted:false});
+        this.setState({ level: this.state.level + 1, isSubmitted:false});
+        setTimeout(()=> { 
         console.log(this.state.level);
         this.updateDb();
+        setTimeout(()=>window.location.reload(true),2000);
+        },1000)
+        
     }
+    if(this.state.taskguess != "abc" && level===1) {
+        alert("Wrong answer!!");
+    }
+    if (this.state.taskguess === "def" && level===7) {
+        this.setState({ level: this.state.level + 1, isSubmitted:false});
+        setTimeout(()=> {
+        console.log(this.state.level);
+        this.updateDb();
+        setTimeout(()=>window.location.reload(true),2000);
+        },1000)
+    }
+    if (this.state.taskguess != "def" && level===7)
+        alert("Wrong answer!!")
   };
   textTask(level) {
     if (level === 1) {
@@ -389,7 +403,7 @@ class Home extends Component {
                   ) :
                   (
                     <div classname = "col-sm-5 offset-sm-3 text-center">
-                      <h1> GAME OVER</h1>
+                      <h1 style={{textAlign:"center"}}> GAME OVER</h1>
                     </div>
                   )}
                 <div className="form-group mx-10 text-center">
